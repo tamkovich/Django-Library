@@ -2,8 +2,8 @@
 
 {% block content %}
     {% for user in users %}
-          <h1>{{user.username}}</h1>
-          <br>
+        <a href="/lib/{{ user.id }}">{{ user.username }}</a>
+        <br>
     {% endfor %}
 
     <div class="container-fluid">
