@@ -1,25 +1,54 @@
 {% extends 'base.html' %}
 
 {% block content %}
+<div class="container">
+    <ul class="list-group" style="width: 50rem;">
+    <li class="list-group-item disabled">Users</li>
     {% for user in users %}
-        <a href="/lib/{{ user.id }}">{{ user.username }}</a>
+        <li class="list-group-item"><a href="/lib/{{ user.id }}">
+        {% if user.get_full_name %}
+            {{ user.get_full_name }}
+        {% else %}
+            {{ user.username }}
+        {% endif %}
+        </a></li>
         <br>
     {% endfor %}
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="col-sm-12 col-md-7">
-                <div class="panel panel-default">
-                    <div class="panel-body">
-                        <form method="post" action="">
-                            {% csrf_token %}
-                            {{ user_form }}
-                            <input type="submit">
-                        </form>
-                    </div>
-                </div>
-            </div>
-        </div>
+    </ul>
+</div>
+<div class="container" style="align-items: center;
+    justify-content: space-around;
+    display: flex;
+    float: none;">
+    <div class="card" style="width: 20rem; position: relative;">
+      <div class="card-header">
+          Create user there!
+      </div>
+      <div class="card-body" style="align-items: center; justify-content: center; display: flex;">
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputEmail1">Username</label>
+            {{ user_form.username }}
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">First name</label>
+            {{ user_form.first_name }}
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Last name</label>
+            {{ user_form.last_name }}
+            <small id="emailHelp" class="form-text text-muted">We'll never share your email with anyone else.</small>
+          </div>
+          <div class="form-group">
+            <label for="exampleInputPassword1">Password</label>
+            {{ user_form.password }}
+          </div>
+          <input type="submit" class="btn btn-primary">
+        </form>
+      </div>
     </div>
-
+</div>
 {% endblock content %}
