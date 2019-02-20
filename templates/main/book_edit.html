@@ -5,19 +5,33 @@
 {% endblock title %}
 
 {% block content %}
-<div class="container-fluid">
-    <div class="row">
-        <div class="col-sm-12 col-md-7">
-            <div class="panel panel-default">
-                <div class="panel-body">
-                    <form method="post" action="">
-                        {% csrf_token %}
-                        {{ book_form }}
-                        <input type="submit">
-                    </form>
-                </div>
-            </div>
-        </div>
+<div class="container" style="align-items: center;
+    justify-content: space-around;
+    display: flex;
+    float: none;">
+    <div class="card" style="width: 50rem; position: relative;">
+      <div class="card-header">
+          Update your book!
+      </div>
+      <div class="card-body" style="align-items: center; justify-content: center; display: flex;">
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputEmail1">Book title</label>
+            {{ book_form.title }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Author</label>
+            {{ book_form.author }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Here the content</label>
+            {{ book_form.content }}
+          </div>
+
+          <input type="submit" class="btn btn-primary">
+        </form>
+      </div>
     </div>
 </div>
 {% endblock content %}
