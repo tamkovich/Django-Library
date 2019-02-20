@@ -1,8 +1,9 @@
+from django.contrib.auth.models import User
+from django.http import Http404
+from django.shortcuts import redirect, render
+from django.urls import reverse
 from django.views.generic.list import ListView
 from django.views.generic import TemplateView
-from django.contrib.auth.models import User
-from django.shortcuts import redirect, render
-from django.http import Http404
 
 from main.forms import UserForm, BookCreateForm
 from main.models import Book
@@ -61,5 +62,35 @@ class UserBookLibView(TemplateView):
             'user': user,
             'books': Book.objects.filter(owner=user),
             'book_form': form,
+        }
+        return render(request, self.template_name, args)
+
+
+class BookEditView(TemplateView):
+
+    template_name = 'main/book_edit.html'
+
+    def get(self, request, *args, **kwargs):
+        try:
+            book = Book.objects.get(id=kwargs['id'])
+        except:
+            return Http404
+        form = BookCreateForm(instance=book)
+        args = {
+            'book_form': form,
+        }
+        return render(request, self.template_name, args)
+
+    def post(self, request, *args, **kwargs):
+        try:
+            book = Book.objects.get(id=kwargs['id'])
+        except:
+            return Http404
+        form = BookCreateForm(request.POST, instance=book)
+        if form.is_valid():
+            form.save(book.owner)
+            return redirect(reverse('main:user-lib', kwargs={'id': book.owner_id}))
+        args = {
+            'book_form': form
         }
         return render(request, self.template_name, args)
