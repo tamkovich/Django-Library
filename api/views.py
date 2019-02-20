@@ -10,36 +10,56 @@ from rest_framework import status
 
 from main.models import Book
 from api.serializers import (
-    PostCreateSerializer,
-    UserListSerializer
+    BookListCreateSerializer,
+    UserListCreateSerializer
 )
 
 
 class UserListAPIView(ListCreateAPIView):
 
     queryset = User.objects.all()
-    serializer_class = UserListSerializer
+    serializer_class = UserListCreateSerializer
 
     def create(self, request, *args, **kwargs):
         serializer = self.get_serializer(data=request.data)
         serializer.is_valid(raise_exception=True)
         self.perform_create(serializer)
         users = User.objects.all()
-        serializer = UserListSerializer(users, many=True)
+        serializer = UserListCreateSerializer(users, many=True)
         headers = self.get_success_headers(serializer.data)
         return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
 
-    # @staticmethod
-    # def _get_object(id):
-    #     try:
-    #         return User.objects.get(pk=id)
-    #     except User.DoesNotExist:
-    #         raise Http404
-    #
-    # def get(self, request, format=None):
-    #     users = User.objects.all()
-    #     serializer = UserListSerializer(users, many=True)
-    #     return Response(serializer.data)
-    #
-    # def post(self, request, format=None):
-    #     return redirect(reverse('api:user-list'))
+
+class UserBookLibAPIView(ListCreateAPIView):
+
+    queryset = Book.objects.all()
+    serializer_class = BookListCreateSerializer
+
+    def _get_queryset(self, pk=None):
+        if pk:
+            return self.queryset.filter(owner_id=pk)
+        else:
+            return self.queryset
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self._get_queryset(kwargs.get('id')))
+
+        page = self.paginate_queryset(queryset)
+        if page is not None:
+            serializer = self.get_serializer(page, many=True)
+            return self.get_paginated_response(serializer.data)
+
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
+
+    def create(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer, pk=kwargs.get('id'))
+        books = Book.objects.filter(owner_id=kwargs.get('id'))
+        serializer = BookListCreateSerializer(books, many=True)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
+
+    def perform_create(self, serializer, pk=None):
+        serializer.save(owner_id=pk)

@@ -8,7 +8,7 @@ from django.contrib.auth.models import User
 from main.models import Book
 
 
-class PostCreateSerializer(ModelSerializer):
+class BookListCreateSerializer(ModelSerializer):
     owner = CharField(read_only=True)
 
     class Meta:
@@ -26,7 +26,7 @@ class PostCreateSerializer(ModelSerializer):
         }
 
 
-class UserListSerializer(ModelSerializer):
+class UserListCreateSerializer(ModelSerializer):
     class Meta:
         model = User
         fields = [
