@@ -41,3 +41,21 @@ class UserListCreateSerializer(ModelSerializer):
                 "write_only": True
             }
         }
+
+
+class BookDetailSerializer(ModelSerializer):
+    owner = CharField(read_only=True)
+
+    class Meta:
+        model = Book
+        fields = [
+            'owner',
+            'title',
+            'content',
+            'author',
+        ]
+        extra_kwargs = {
+            "owner": {
+                "read_only": True
+            }
+        }

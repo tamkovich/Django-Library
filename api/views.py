@@ -1,18 +1,15 @@
 from django.contrib.auth.models import User
-from django.http import Http404
-from django.shortcuts import redirect, render
-from django.urls import reverse
-from rest_framework.views import APIView
-from rest_framework.generics import ListCreateAPIView
+from django.shortcuts import get_object_or_404
+from rest_framework.generics import ListCreateAPIView, RetrieveUpdateAPIView
 from rest_framework.response import Response
-from rest_framework import viewsets
 from rest_framework import status
 
-from main.models import Book
 from api.serializers import (
     BookListCreateSerializer,
-    UserListCreateSerializer
+    BookDetailSerializer,
+    UserListCreateSerializer,
 )
+from main.models import Book
 
 
 class UserListAPIView(ListCreateAPIView):
@@ -63,3 +60,21 @@ class UserBookLibAPIView(ListCreateAPIView):
 
     def perform_create(self, serializer, pk=None):
         serializer.save(owner_id=pk)
+
+
+class BookUpdateAPIView(RetrieveUpdateAPIView):
+
+    serializer_class = BookDetailSerializer
+    lookup_field = 'id'
+
+    def get(self, request, *args, **kwargs):
+        book = Book.objects.get(id=kwargs.get('id'))
+        serializer = self.serializer_class(book)
+        return Response(serializer.data)
+
+    def get_object(self):
+        pk = self.kwargs["id"]
+        return get_object_or_404(Book, id=pk)
+
+    def update(self, request, *args, **kwargs):
+        return super(BookUpdateAPIView, self).update(request, *args, **kwargs)
