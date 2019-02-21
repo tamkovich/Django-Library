@@ -30,7 +30,7 @@ class UserListCreateSerializer(ModelSerializer):
         }
 
     def get_library(self, obj):
-        return f'lib/{obj.id}/'
+        return f'/api/lib/{obj.id}/'
 
 
 class BookListCreateSerializer(ModelSerializer):
@@ -53,7 +53,7 @@ class BookListCreateSerializer(ModelSerializer):
         }
 
     def get_edit_url(self, obj):
-        return f'/book/{obj.id}/edit/'
+        return obj.get_api_url()
 
 
 class BookDetailSerializer(ModelSerializer):
