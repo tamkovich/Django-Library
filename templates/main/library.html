@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}
+<title>Library - {{ user.username }}</title>
+{% endblock title %}
+
+{% block content %}
+    <main role="main" class="container">
+        <div class="row mb-2">
+        {% for book in books %}
+        <div class="col-md-6">
+          <div class="card flex-md-row mb-4 box-shadow h-md-250">
+            <div class="card-body d-flex flex-column align-items-start">
+              <strong class="d-inline-block mb-2 text-primary">{{ book.title }}</strong>
+              <h3 class="mb-0">
+                <a class="text-dark" href="{{ book.get_absolute_url }}">{{ book.title|truncatechars:20 }}</a>
+              </h3>
+              <div class="mb-1 text-muted">{{ book.author }}</div>
+              <p class="card-text mb-auto">{{ book.content|truncatechars:50 }}</p>
+              <a href="{{ book.get_absolute_url }}">Edit book</a>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+        </div>
+    </main>
+<div class="container" style="align-items: center;
+    justify-content: space-around;
+    display: flex;
+    float: none;">
+    <div class="card" style="width: 20rem; position: relative;">
+      <div class="card-header">
+          Which book did you read last time?
+      </div>
+      <div class="card-body" style="align-items: center; justify-content: center; display: flex;">
+        <form method="post" action="">
+          {% csrf_token %}
+          <div class="form-group">
+            <label for="exampleInputEmail1">Book title</label>
+            {{ book_form.title }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Author</label>
+            {{ book_form.author }}
+          </div>
+          <div class="form-group">
+            <label for="exampleInputEmail1">Here the content</label>
+            {{ book_form.content }}
+          </div>
+
+          <input type="submit" class="btn btn-primary">
+        </form>
+      </div>
+    </div>
+</div>
+{% endblock %}
